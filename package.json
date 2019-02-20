@@ -1,0 +1,20 @@
+{
+  "name": "tocaboca-assignment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "next start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4",
+    "next": "^8.0.1",
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2"
+  }
+}
