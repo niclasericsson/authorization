@@ -11,12 +11,23 @@ app.prepare()
 .then(() => {
   const server = express()
 
-  server.get('/api/home', function(req, res) {
-    res.send('Hello and welcome to Home!');
-  });
-  server.get('/api/page2', function(req, res) {
+  server.get('/page2', function(req, res) {
     res.send('Server sent this to page 2');
   });
+  server.get('/page3', function(req, res) {
+    res.send('Server sent this to page 3');
+  });
+
+
+
+  server.post('/login', function(req, res) {
+    const { email, password } = req.body;
+    //const user = new User({ email, password });
+    res.status(200).send("Signed in");
+  });
+
+
+
     
   server.get('*', (req, res) => {
     return handle(req, res)
@@ -24,7 +35,7 @@ app.prepare()
     
   server.listen(3000, (err) => {
     if (err) throw err
-    console.log('> Ready on http://localhost:3000')
+    console.log('> Ready on http:/'+'/localhost:3000')
   })
 })
 .catch((ex) => {

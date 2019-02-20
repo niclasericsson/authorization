@@ -1,45 +1,52 @@
-/*const Index = () => (
-  <div>
-    <p>Hello Next.js</p>
-  </div>
+import { Provider, connect } from 'react-redux';
+import configureStore from '../store';
+import Page2 from './page2';
+
+const store = configureStore();
+
+export default class App extends React.Component {
+
+	constructor(props) {
+        super(props);
+        const storeState = store.getState();
+        console.log(storeState)
+        this.state = {
+            user: storeState.user,
+            isLoading: true,
+            isCheckingUserLogin: true
+        }
+        const storeStateChange = this.storeStateChange.bind(this)
+        store.subscribe(storeStateChange)
+    };
+
+    storeStateChange(){
+        const storeState = store.getState();
+        console.log(storeState)
+        if((storeState.user != null && this.state.user == null) || (storeState.user && storeState.user.id && this.state.user.id && storeState.user.id != this.state.user.id)){
+            this.setState({
+                ...this.state,
+                user: storeState.user
+            })
+            registerForPushNotificationsAsync(storeState.user.id);            
+        }
+    }
+
+    render(){
+    	return (
+    		<Provider store={store}>
+    			<div>
+					<Page2 />
+				</div>
+			</Provider>
+    	)
+    }
+
+}
+
+/*const App = () => (
+	<div>
+		<Page2 />
+	</div>
 )
 
-export default Index*/
-
-
-
-import React, { Component } from 'react';
-//import { Link, Route, Switch } from 'react-router-dom';
-import Link from 'next/link'
-
-export default class Index extends Component {
-
-	constructor(){
-		super();
-		this.state = {
-			message: 'Loading...'
-		}
-	}
-
-	componentDidMount() {
-	    //GET message from server using fetch api
-	    fetch('/api/home')
-	      .then(res => res.text())
-	      .then(res => this.setState({message: res}));
-	 }
-
-  render() {
-
-  	const { message } = this.state;
-
-    return (
-      <div>
-      	<span>{message}</span>
-        <ul>
-          <li><Link href="/"><a>Home</a></Link></li>
-          <li><Link href="/page2"><a>Page 2</a></Link></li>
-        </ul>
-      </div>
-    );
-  }
-}
+export default App;*/
