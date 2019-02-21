@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Link from 'next/link'
 
-export default class Page3 extends Component {
+export default class SignOut extends Component {
 
 	constructor(){
 		super();
@@ -12,7 +12,7 @@ export default class Page3 extends Component {
 
 	componentDidMount() {
 	    //GET message from server using fetch api
-	    fetch('/page3')
+	    fetch('/api/signout')
 	      .then(res => res.text())
 	      .then(res => this.setState({message: res}));
 	 }
@@ -25,8 +25,8 @@ export default class Page3 extends Component {
       <div>
       	<span>{message}</span>
         <ul>
-          <li><Link href="/page2"><a>Page 2</a></Link></li>
-          <li><Link href="/page3"><a>Page 3</a></Link></li>
+          <li><Link href="/signin"><a>Sign In</a></Link></li>
+          <li><Link href="/signout"><a>Sign Out</a></Link></li>
         </ul>
       </div>
     );

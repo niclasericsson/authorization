@@ -1,6 +1,6 @@
 import { Provider, connect } from 'react-redux';
 import configureStore from '../store';
-import Page2 from './page2';
+import SignIn from './signin';
 
 const store = configureStore();
 
@@ -27,7 +27,7 @@ export default class App extends React.Component {
                 ...this.state,
                 user: storeState.user
             })
-            registerForPushNotificationsAsync(storeState.user.id);            
+            //registerForPushNotificationsAsync(storeState.user.id);            
         }
     }
 
@@ -35,7 +35,7 @@ export default class App extends React.Component {
     	return (
     		<Provider store={store}>
     			<div>
-					<Page2 />
+					<SignIn />
 				</div>
 			</Provider>
     	)
