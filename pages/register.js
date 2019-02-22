@@ -46,31 +46,6 @@ export default class SignIn extends Component {
             })
 	 }
 
-	 signIn(){
-        const { email, password } = this.state;
-	 	fetch('/api/login', {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/json',
-            }),
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        })
-        //.then(res => res.text())
-        //.then(res => this.setState({message: res}));
-        .then(res => {
-            console.log(res)
-            if (res.status === 200) {
-                //this.props.history.push('/signout');
-                console.log('yes')
-            } else {
-                console.log('nope')
-            }
-        })
-	 }
-
      register(){
         const { email, password } = this.state;
         fetch('/api/register', {
@@ -113,9 +88,9 @@ export default class SignIn extends Component {
         <input type="text" value={this.state.email} onChange={this.handleEmailChange} />
         <input type="text" value={this.state.password} onChange={this.handlePasswordChange} />
 
-        <button onClick={() => this.signIn()}>Sign in</button>
+        <button onClick={() => this.register()}>Register</button>
 
-        <Link href="/register"><a>Register</a></Link>
+        <Link href="/"><a>Back</a></Link>
 
       </div>
     );
