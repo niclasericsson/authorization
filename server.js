@@ -1,7 +1,11 @@
+// Initialize server
 const express = require('express')
 const next = require('next')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const dev = process.env.NODE_ENV !== 'production'
+const app = next({ dev })
+const handle = app.getRequestHandler()
 
 // Parsers
 const bodyParser = require('body-parser');
@@ -10,12 +14,18 @@ const cookieParser = require('cookie-parser');
 // Custom middleware
 const authMiddleware = require('./server/middleware');
 
-// This could be improved!
+// Set a secret - this could be improved!
 var secret = new Buffer('tocabocasecret', 'base64');
-    
-const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
-const handle = app.getRequestHandler()
+
+// Initialize Firebase
+var fb = require("firebase-admin");
+var serviceAccount = require("./server/serviceAccount.json");
+fb.initializeApp({
+  credential: fb.credential.cert(serviceAccount),
+  databaseURL: "https:/"+"/tocaboca-project.firebaseio.com",
+  authDomain: "tocaboca-project.firebaseapp.com",
+  projectId: "tocaboca-project"
+});
 
 // Todo: Fix better storing of user data
 var user = {
@@ -27,15 +37,13 @@ app.prepare()
     .then(() => {
         const server = express()
 
-
-
+        // Allow Authorization header
         server.use((req, res, next) => {
             res.setHeader('Access-Control-Allow-Headers', 'Content-type,Authorization');
             next();
         });
 
-
-
+        // Use parsers
         server.use(bodyParser.urlencoded({ extended: false }));
         server.use(bodyParser.json());
         server.use(cookieParser());
@@ -97,6 +105,10 @@ app.prepare()
             bcrypt.hash(password, saltRounds, function (err, hash) {
                 // Todo: Fix better user storing
                 user = { email: email, password: hash }
+
+                // Store user with password in Firebase
+                fb.database().ref('users/' + email).set(hash);
+
                 res.status(200).send("Stored!");
             });
 
