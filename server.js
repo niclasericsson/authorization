@@ -27,12 +27,6 @@ fb.initializeApp({
   projectId: "tocaboca-project"
 });
 
-// Todo: Fix better storing of user data
-var user = {
-    email: 'null',
-    password: 'null'
-}
-
 app.prepare()
     .then(() => {
         const server = express()
@@ -64,36 +58,42 @@ app.prepare()
 
         server.post('/api/login', function(req, res) {
             const { email, password } = req.body;
-            console.log('Authenticating...')
+            console.log('Authorizing...')
 
-            // Todo: Implement Firebase (or something) here
+            // Check Firebase for user
+            fb.database().ref('users/' + email).once('value').then(function(snapshot) {
+                var passwordToCheck = snapshot.val()
 
-            // Check if user is correct
-            if(email === user.email){
+                // If user exists, check password
+                if(passwordToCheck){
+                    console.log('User exists, checking password...')
+                    bcrypt.compare(password, passwordToCheck, function (err, result) {
+                        if (result === true) {
 
-                bcrypt.compare(password, user.password, function (err, result) {
-                    if (result === true) {
+                            console.log('Success! Creating and setting JWT...')
 
-                        console.log('Success! Creating and setting JWT...')
+                            // Let's create a token
+                            let token = jwt.sign(
+                                {email: email },
+                                secret,
+                                { expiresIn: 129600 }
+                            );
 
-                        // Let's create a token
-                        let token = jwt.sign(
-                            {email: email },
-                            secret,
-                            { expiresIn: 129600 }
-                        );
+                            // Store browser cookie
+                            res.cookie('token', token, { httpOnly: true }).sendStatus(200);
 
-                        // Store browser cookie
-                        res.cookie('token', token, { httpOnly: true }).sendStatus(200);
+                        } else {
+                            console.log('Wrong password')
+                            res.status(400).json({ error: true, message: 'Wrong password' });
+                        }
+                    });
 
-                    } else {
-                        res.status(400).json({ error: true, message: 'Incorrect credentials' });
-                    }
-                });
+                } else {
+                    console.log('No user found')
+                    res.status(400).json({ error: true, message: 'No user found' });
+                }
 
-            } else {
-              res.status(400).json({ error: true, message: 'Incorrect credentials' });
-            }
+            });
 
         });
 
@@ -103,8 +103,6 @@ app.prepare()
             // Hash the password and store the user
             const saltRounds = 10;
             bcrypt.hash(password, saltRounds, function (err, hash) {
-                // Todo: Fix better user storing
-                user = { email: email, password: hash }
 
                 // Store user with password in Firebase
                 fb.database().ref('users/' + email).set(hash);
@@ -112,10 +110,6 @@ app.prepare()
                 res.status(200).send("Stored!");
             });
 
-        });
-
-        server.get('/api/getuser', function(req, res) {
-            res.send(user);
         });
 
         server.get('*', (req, res) => {
