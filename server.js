@@ -29,7 +29,7 @@ fb.initializeApp({
 
 app.prepare()
     .then(() => {
-        const server = express()
+        const server = express();
 
         // Allow Authorization header
         server.use((req, res, next) => {
@@ -42,19 +42,13 @@ app.prepare()
         server.use(bodyParser.json());
         server.use(cookieParser());
 
-        server.get('/api/signin', function(req, res) {
-            res.send('Server sent this to SignIn');
-        });
-
-        server.get('/api/signout', authMiddleware, function(req, res) {
-            res.send('Secret site!');
-        });
-
         server.get('/api/verify', authMiddleware, function(req, res) {
             res.sendStatus(200);
         });
 
-
+        server.get('/api/getuser', authMiddleware, function(req, res) {
+            res.json({ user: req.email });
+        });
 
         server.post('/api/login', function(req, res) {
             const { email, password } = req.body;
@@ -95,6 +89,10 @@ app.prepare()
 
             });
 
+        });
+
+        server.get('/api/logout', function(req, res) {
+            res.clearCookie('token').status(200);
         });
 
         server.post('/api/register', function(req, res) {

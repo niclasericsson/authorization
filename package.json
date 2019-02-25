@@ -23,8 +23,10 @@
     "next": "^8.0.1",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
+    "react-icons": "^3.4.0",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "simple-flexbox": "^1.2.0"
   }
 }

@@ -1,52 +1,156 @@
-import { Provider, connect } from 'react-redux';
-import configureStore from '../store';
-import SignIn from './signin';
+import React, { Component } from 'react'
+import Link from 'next/link'
+import Router from 'next/router'
+import { Column, Row } from 'simple-flexbox';
 
-const store = configureStore();
+import Logo from '../components/assets'
+import Layout from '../components/Layout.js'
 
-export default class App extends React.Component {
+export default class Home extends Component {
 
-	constructor(props) {
+    constructor(props){
         super(props);
-        const storeState = store.getState();
-        console.log(storeState)
         this.state = {
-            user: storeState.user,
+            signedIn: false,
             isLoading: true,
-            isCheckingUserLogin: true
+            email: '',
+            password: ''
         }
-        const storeStateChange = this.storeStateChange.bind(this)
-        store.subscribe(storeStateChange)
-    };
+        this.handleEmailChange = this.handleEmailChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    }
 
-    storeStateChange(){
-        const storeState = store.getState();
-        console.log(storeState)
-        if((storeState.user != null && this.state.user == null) || (storeState.user && storeState.user.id && this.state.user.id && storeState.user.id != this.state.user.id)){
-            this.setState({
-                ...this.state,
-                user: storeState.user
+    componentDidMount() {
+
+        fetch('/api/verify')
+            .then(res => {
+                if (res.status === 200) {
+                    this.setState({
+                        isLoading: false,
+                        signedIn: true
+                    })
+                } else {
+                    this.setState({
+                        isLoading: false,
+                        signedIn: false
+                    })
+                }
             })
-            //registerForPushNotificationsAsync(storeState.user.id);            
-        }
+     }
+
+    signIn(){
+        this.setState({ isLoading: true })
+        const { email, password } = this.state;
+        fetch('/api/login', {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+            }),
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        })
+        .then(res => {
+            console.log(res)
+            if (res.status === 200) {
+                this.setState({
+                    isLoading: false,
+                    signedIn: true
+                })
+            } else {
+                alert('Failed :(')
+                this.setState({
+                    isLoading: false,
+                    signedIn: false
+                })
+            }
+        })
     }
 
-    render(){
-    	return (
-    		<Provider store={store}>
-    			<div>
-					<SignIn />
-				</div>
-			</Provider>
-    	)
+    signOut(){
+        this.setState({ isLoading: true })
+        fetch('/api/logout')
+            .then(res => {
+                this.setState({
+                    isLoading: false,
+                    signedIn: false
+                })
+            })
     }
 
+    handleEmailChange(event) {
+        this.setState({email: event.target.value});
+    }
+
+    handlePasswordChange(event) {
+        this.setState({password: event.target.value});
+    }
+
+  render() {
+
+    const { email, password, isLoading, signedIn } = this.state;
+    console.log(signedIn)
+
+    if(isLoading){
+        return (
+            <div style={styles.container}>
+                <span>Loading...</span>
+            </div>
+        );
+    }
+
+    if(signedIn){
+        return (
+            <Layout signedIn={signedIn}>
+                <div style={styles.container}>
+                    
+                    
+                    <button onClick={() => this.signOut()}>Sign out</button>
+
+                    <Row vertical='center' justifyContent='center'>
+                        <h1 style={styles.title}>Woho! You're signed in!</h1>
+                        <Logo />
+                    </Row>
+
+                </div>
+            </Layout>
+        );
+    }
+
+    return (
+        <Layout signedIn={signedIn}>
+            <div style={styles.container}>
+                <Logo />
+
+                <Row vertical='center' justifyContent='center'>
+                    <Column vertical='end'>
+                        <h1>Sign in</h1>
+                        <input style={styles.input} type="text" placeholder='Username or email' value={email} onChange={this.handleEmailChange} />
+                        <input style={styles.input} type="text" placeholder='Password' value={password} onChange={this.handlePasswordChange} />
+                        <button onClick={() => this.signIn()}>Sign in</button>
+                    </Column>
+                </Row>
+
+            </div>
+        </Layout>
+    );
+  }
 }
 
-/*const App = () => (
-	<div>
-		<Page2 />
-	</div>
-)
-
-export default App;*/
+const styles = {
+    container: {
+        padding: 20
+    },
+    input: {
+        padding: 10,
+        border: '1px solid #ccc',
+        borderRadius: 20,
+        width: 350,
+        marginBottom: 20,
+        fontFamily: 'Quicksand'
+    },
+    title: {
+        margin: 20
+    }
+}
