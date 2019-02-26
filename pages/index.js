@@ -5,6 +5,7 @@ import { Column, Row } from 'simple-flexbox';
 import Button from 'react-bootstrap/Button';
 import { Logo, Bat } from '../components/assets'
 import Layout from '../components/Layout.js'
+import Loading from '../components/Loading.js'
 
 export default class Home extends Component {
 
@@ -13,17 +14,19 @@ export default class Home extends Component {
         this.state = {
             signedIn: false,
             isLoading: true,
-            email: '',
+            message: null,
+            username: '',
             password: ''
         }
-        this.handleEmailChange = this.handleEmailChange.bind(this);
+        this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
     }
 
     componentDidMount() {
-        fetch('/api/verify')
-            .then(res => {
-                if (res.status === 200) {
+        fetch('/api/user')
+            .then(res => res.json())
+            .then(resJson => {
+                if(!resJson.error){
                     this.setState({
                         isLoading: false,
                         signedIn: true
@@ -34,37 +37,37 @@ export default class Home extends Component {
                         signedIn: false
                     })
                 }
-            })
+            });
      }
 
     signIn(){
         this.setState({ isLoading: true })
-        const { email, password } = this.state;
+        const { username, password } = this.state;
         fetch('/api/login', {
             method: 'POST',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
             body: JSON.stringify({
-                email: email,
+                username: username,
                 password: password
             })
         })
-        .then(res => {
-            console.log(res)
-            if (res.status === 200) {
-                this.setState({
-                    isLoading: false,
-                    signedIn: true
-                })
-            } else {
-                this.setState({
-                    isLoading: false,
-                    signedIn: false
-                })
-                alert('Failed :(')
-            }
-        })
+        .then(res => res.json())
+            .then(resJson => {
+                if(!resJson.error){
+                    this.setState({
+                        isLoading: false,
+                        signedIn: true
+                    })
+                } else {
+                    this.setState({
+                        isLoading: false,
+                        signedIn: false,
+                        message: resJson.message
+                    })
+                }
+            });
     }
 
     signOut(){
@@ -78,8 +81,8 @@ export default class Home extends Component {
             })
     }
 
-    handleEmailChange(event) {
-        this.setState({email: event.target.value});
+    handleUserNameChange(event) {
+        this.setState({username: event.target.value});
     }
 
     handlePasswordChange(event) {
@@ -88,13 +91,11 @@ export default class Home extends Component {
 
   render() {
 
-    const { email, password, isLoading, signedIn } = this.state;
+    const { username, password, isLoading, signedIn, message } = this.state;
 
     if(isLoading){
         return (
-            <div style={styles.container}>
-                <span>Loading...</span>
-            </div>
+            <Loading />
         );
     }
 
@@ -121,7 +122,12 @@ export default class Home extends Component {
                 <Row vertical='center' justifyContent='center'>
                     <Column vertical='end'>
                         <h1 style={styles.title}>Sign in</h1>
-                        <input style={styles.input} type="text" placeholder='Username or email' value={email} onChange={this.handleEmailChange} />
+                        { message ?
+                            <div style={styles.messageBox}>{message}</div>
+                        :
+                            null
+                        }
+                        <input style={styles.input} type="text" placeholder='Username' value={username} onChange={this.handleUserNameChange} />
                         <input style={styles.input} type="password" placeholder='Password' value={password} onChange={this.handlePasswordChange} />
                         <Button variant="outline-dark" onClick={() => this.signIn()}>Sign in</Button>
                     </Column>
@@ -149,5 +155,14 @@ const styles = {
         width: 350,
         marginBottom: 20,
         fontFamily: 'Quicksand'
+    },
+    messageBox: {
+        padding: 10,
+        width: 350,
+        borderRadius: 5,
+        marginBottom: 20,
+        backgroundColor: '#009999',
+        color: '#fff',
+        textAlign: 'center'
     }
 }

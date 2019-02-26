@@ -1,16 +1,16 @@
-var secret = new Buffer('tocabocasecret', 'base64');
+var secret = Buffer.from('tocabocasecret', 'base64');
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = function(req, res, next) {
  	const token = req.cookies.token || req.headers['x-access-token'] || req.body.token || req.query.token;
  	if(!token){
-    	res.status(401).send('No token');
+    	res.send(JSON.stringify({ error: true, message: 'No token' }));
   	} else {
     	jwt.verify(token, secret, function(error, decoded) {
 	      	if(error){
-	        	res.status(401).send('Invalid token');
+	        	res.status(401).send(JSON.stringify({ error: true, message: 'Invalid token' }));
 	      	} else {
-	        	req.email = decoded.email;
+	        	req.username = decoded.username;
 	        	next();
 	      	}
 	    });

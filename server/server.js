@@ -12,14 +12,14 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
 // Custom middleware
-const authMiddleware = require('./server/middleware');
+const authMiddleware = require('../server/middleware/auth');
 
 // Set a secret (should be fixed in production)
-var secret = new Buffer('tocabocasecret', 'base64');
+var secret = Buffer.from('tocabocasecret', 'base64');
 
 // Initialize Firebase
 var fb = require("firebase-admin");
-var serviceAccount = require("./server/serviceAccount.json");
+var serviceAccount = require("../server/serviceAccount.json");
 fb.initializeApp({
   credential: fb.credential.cert(serviceAccount),
   databaseURL: "https:/"+"/tocaboca-project.firebaseio.com",
@@ -45,20 +45,20 @@ app.prepare()
         server.use(bodyParser.json());
         server.use(cookieParser());
 
-        server.get('/api/verify', authMiddleware, function(req, res) {
-            res.sendStatus(200);
+        server.get('/api/user', authMiddleware, function(req, res) {
+            res.status(200).send(JSON.stringify({ error: false, message: req.username }));
         });
 
         server.get('/api/getuser', authMiddleware, function(req, res) {
-            res.send(req.email);
+            res.status(200).send(JSON.stringify({ username: req.username }));
         });
 
         server.post('/api/login', function(req, res) {
-            const { email, password } = req.body;
+            const { username, password } = req.body;
             console.log('Attempting to log in...')
 
             // Check Firebase for user
-            fb.database().ref('users/' + email).once('value').then(function(snapshot) {
+            fb.database().ref('users/' + username).once('value').then(function(snapshot) {
                 var passwordToCheck = snapshot.val()
 
                 // If user exists, check password
@@ -71,23 +71,25 @@ app.prepare()
 
                             // Let's create a token
                             let token = jwt.sign(
-                                { email: email },
+                                { username: username },
                                 secret,
                                 { expiresIn: 3600 }
                             );
 
                             // Store browser cookie
-                            res.cookie('token', token, { httpOnly: true }).sendStatus(200);
+                            res.cookie('token', token, { httpOnly: true }).status(200).send(JSON.stringify({ error: false, message: 'ok' }));
 
                         } else {
                             console.log('Wrong password')
-                            res.status(400).json({ error: true, message: 'Wrong password' });
+                            //res.status(400).send({ error: true, message: 'Wrong password' });
+                            res.status(400).send(JSON.stringify({ error: true, message: 'Wrong password' }));
                         }
                     });
 
                 } else {
                     console.log('No user found')
-                    res.status(400).json({ error: true, message: 'No user found' });
+                    //res.status(400).json({ error: true, message: 'No user found' });
+                    res.status(400).send(JSON.stringify({ error: true, message: 'No user found' }));
                 }
 
             });
@@ -99,16 +101,17 @@ app.prepare()
         });
 
         server.post('/api/register', function(req, res) {
-            const { email, password } = req.body;
+            const { username, password } = req.body;
 
             // Hash the password and store the user
             const saltRounds = 10;
             bcrypt.hash(password, saltRounds, function (err, hash) {
 
                 // Store user with password in Firebase
-                fb.database().ref('users/' + email).set(hash);
+                fb.database().ref('users/' + username).set(hash);
 
-                res.status(200).json({ error: false, message: 'Stored!' });
+                //res.status(200).json({ error: false, message: 'Stored!' });
+                res.status(200).send(JSON.stringify({ error: false, message: 'User stored' }));
             });
 
         });

@@ -1,14 +1,12 @@
 import Header from './Header'
 import Meta from '../components/meta'
 import MainFont from '../components/MainFont'
+import { Row } from 'simple-flexbox'
 
-class Layout extends React.Component {
+class Loading extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            signedIn: props.signedIn
-        }
     };
 
     componentDidMount(){
@@ -17,13 +15,13 @@ class Layout extends React.Component {
   
     render() {
 
-        const { signedIn } = this.state;
-
         return(
             <div>
             	<Meta />
-				<Header signedIn={signedIn} disabled={false} />
-				{this.props.children}
+				<Header disabled={true} />
+				<Row vertical='center' justifyContent='center'>
+					<h1 style={{marginTop: 200}}>Loading...</h1>
+				</Row>
 				<style jsx global>{`
 	                body { 
 	                    margin: 0;
@@ -36,4 +34,4 @@ class Layout extends React.Component {
     }
 }
 
-export default Layout
+export default Loading

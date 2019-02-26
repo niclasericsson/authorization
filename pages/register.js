@@ -3,9 +3,9 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { Column, Row } from 'simple-flexbox';
 import Button from 'react-bootstrap/Button';
-
 import { Logo, Kids } from '../components/assets'
 import Layout from '../components/Layout.js'
+import Loading from '../components/Loading.js'
 
 export default class SignIn extends Component {
 
@@ -13,18 +13,20 @@ export default class SignIn extends Component {
 		super();
 		this.state = {
             signedIn: false,
+            registrationDone: false,
             isLoading: true,
-            email: '',
+            username: '',
             password: ''
 		}
-        this.handleEmailChange = this.handleEmailChange.bind(this);
+        this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
 	}
 
 	componentDidMount() {
-        fetch('/api/verify')
-            .then(res => {
-                if (res.status === 200) {
+        fetch('/api/user')
+            .then(res => res.json())
+            .then(resJson => {
+                if(!resJson.error){
                     this.setState({
                         isLoading: false,
                         signedIn: true
@@ -35,25 +37,48 @@ export default class SignIn extends Component {
                         signedIn: false
                     })
                 }
-            })
+            });
 	 }
 
      register(){
         this.setState({
             isLoading: true
         })
-        const { email, password } = this.state;
+        const { username, password } = this.state;
         fetch('/api/register', {
             method: 'POST',
             headers: new Headers({
                 'Content-Type': 'application/json',
             }),
             body: JSON.stringify({
-              email: email,
+              username: username,
               password: password
             })
         })
-        .then(res => {
+        .then(res => res.json())
+            .then(resJson => {
+                if(!resJson.error){
+                    this.setState({
+                        isLoading: false,
+                        registrationDone: true
+                    })
+                } else {
+                    this.setState({
+                        isLoading: false
+                    })
+                    alert(resJson.message)
+                }
+            });
+
+
+
+
+
+
+
+
+
+        /*.then(res => {
             if (res.status === 200) {
                 this.setState({
                     isLoading: false
@@ -63,11 +88,11 @@ export default class SignIn extends Component {
                     isLoading: false
                 })
             }
-        })
-     }
+        })*/
+    }
 
-    handleEmailChange(event) {
-        this.setState({email: event.target.value});
+    handleUserNameChange(event) {
+        this.setState({username: event.target.value});
     }
 
     handlePasswordChange(event) {
@@ -76,13 +101,11 @@ export default class SignIn extends Component {
 
   render() {
 
-  	const { email, password, isLoading, signedIn } = this.state;
+  	const { username, password, isLoading, signedIn, registrationDone } = this.state;
 
     if(isLoading){
         return (
-            <div style={styles.container}>
-                <span>Loading...</span>
-            </div>
+            <Loading />
         );
     }
 
@@ -103,19 +126,22 @@ export default class SignIn extends Component {
         <Layout signedIn={signedIn}>
             <div style={styles.container}>
                 <Kids />
-
-
-
                 <Row vertical='center' justifyContent='center'>
-                    <Column vertical='end'>
-                        <h1 style={styles.title}>Register a new user</h1>
-                        <input style={styles.input} type="text" placeholder='Type a username or email' value={email} onChange={this.handleEmailChange} />
-                        <input style={styles.input} type="password" placeholder='Set a password' value={password} onChange={this.handlePasswordChange} />
-                        <Button variant="outline-dark" onClick={() => this.register()}>Register</Button>
-                    </Column>
+                    {registrationDone ?
+                        <Column vertical='end'>
+                            <h1 style={styles.title}>Register</h1>
+                            <div style={styles.registrationDoneBox}>User registration complete!</div>
+                        </Column>
+                    :
+                        <Column vertical='end'>
+                            <h1 style={styles.title}>Register</h1>
+                            <input style={styles.input} type="text" placeholder='Type a username' value={username} onChange={this.handleUserNameChange} />
+                            <input style={styles.input} type="password" placeholder='Set a password' value={password} onChange={this.handlePasswordChange} />
+                            <Button variant="outline-dark" onClick={() => this.register()}>Register</Button>
+                        </Column>
+                    }
+
                 </Row>
-
-
             </div>
         </Layout>
     );
@@ -139,5 +165,12 @@ const styles = {
         width: 350,
         marginBottom: 20,
         fontFamily: 'Quicksand'
+    },
+    registrationDoneBox: {
+        padding: 10,
+        width: 350,
+        borderRadius: 5,
+        border: '1px solid',
+        textAlign: 'center'
     }
 }

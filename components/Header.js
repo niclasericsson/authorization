@@ -7,22 +7,23 @@ class Header extends React.Component {
         super(props);
         this.state = {
             signedIn: props.signedIn,
+            disabled: props.disabled,
             user: ''
         }
     };
 
     componentDidMount(){
         if(this.props.signedIn){
-            fetch('/api/getuser')
-                .then(res => res.text())
-                .then(res => this.setState({user: res}));
+            fetch('/api/user')
+                .then(res => res.json())
+                .then(resJson => this.setState({user: resJson.message}));
         }
         
     }
   
     render() {
 
-        const { signedIn, user } = this.state;
+        const { signedIn, user, disabled } = this.state;
 
         if(signedIn){
 
@@ -40,22 +41,34 @@ class Header extends React.Component {
 
         } else {
 
-            return(
-                <div style={styles.container}>
-                    <Link href="/">
-                        <a style={styles.linkStyle}><FiHome /></a>
-                    </Link>
-                    <div style={styles.rightContainer}>
-                        <Link href="/">
-                            <a style={styles.linkStyle}>Sign in</a>
-                        </Link>
-                        <span style={styles.divider}>|</span>
-                        <Link href="/register">
-                            <a style={styles.linkStyle}>Register</a>
-                        </Link>
+            if(disabled){
+
+                return(
+                    <div style={styles.container}>
+                        <span style={styles.linkStyle}><FiHome /></span>
                     </div>
-                </div>
-            )
+                )
+
+            } else {
+
+                return(
+                    <div style={styles.container}>
+                        <Link href="/">
+                            <a style={styles.linkStyle}><FiHome /></a>
+                        </Link>
+                        <div style={styles.rightContainer}>
+                            <Link href="/">
+                                <a style={styles.linkStyle}>Sign in</a>
+                            </Link>
+                            <span style={styles.divider}>|</span>
+                            <Link href="/register">
+                                <a style={styles.linkStyle}>Register</a>
+                            </Link>
+                        </div>
+                    </div>
+                )
+
+            }
 
         }
     }
