@@ -4,13 +4,12 @@ export default () => (
         <Head>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <meta charSet="utf-8" />
-            <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet" />
+            <link
+                rel="stylesheet"
+                href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+                integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+                crossOrigin="anonymous"
+            />
         </Head>
-        <style jsx global>{`
-            body { 
-                margin: 0;
-                font-family: 'Quicksand', sans-serif;
-            }
-        `}</style>
   </div>
 )

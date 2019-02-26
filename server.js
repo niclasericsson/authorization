@@ -37,6 +37,9 @@ app.prepare()
             next();
         });
 
+        // Set JSON spaces for intendation
+        server.set('json spaces', 2);
+
         // Use parsers
         server.use(bodyParser.urlencoded({ extended: false }));
         server.use(bodyParser.json());
@@ -47,12 +50,12 @@ app.prepare()
         });
 
         server.get('/api/getuser', authMiddleware, function(req, res) {
-            res.json({ user: req.email });
+            res.send({ user: req.email });
         });
 
         server.post('/api/login', function(req, res) {
             const { email, password } = req.body;
-            console.log('Authorizing...')
+            console.log('Attempting to log in...')
 
             // Check Firebase for user
             fb.database().ref('users/' + email).once('value').then(function(snapshot) {
@@ -70,7 +73,7 @@ app.prepare()
                             let token = jwt.sign(
                                 {email: email },
                                 secret,
-                                { expiresIn: 129600 }
+                                { expiresIn: 3600 }
                             );
 
                             // Store browser cookie
@@ -92,7 +95,7 @@ app.prepare()
         });
 
         server.get('/api/logout', function(req, res) {
-            res.clearCookie('token').status(200);
+            res.clearCookie('token').sendStatus(200);
         });
 
         server.post('/api/register', function(req, res) {
@@ -105,7 +108,7 @@ app.prepare()
                 // Store user with password in Firebase
                 fb.database().ref('users/' + email).set(hash);
 
-                res.status(200).send("Stored!");
+                res.status(200).json({ error: false, message: 'Stored!' });
             });
 
         });

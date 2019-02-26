@@ -1,5 +1,6 @@
 import Header from './Header'
 import Meta from '../components/meta'
+import MainFont from '../components/MainFont'
 
 class Layout extends React.Component {
 
@@ -9,6 +10,10 @@ class Layout extends React.Component {
             signedIn: props.signedIn
         }
     };
+
+    componentDidMount(){
+    	MainFont();
+    }
   
     render() {
 
@@ -19,6 +24,12 @@ class Layout extends React.Component {
             	<Meta />
 				<Header signedIn={signedIn} />
 				{this.props.children}
+				<style jsx global>{`
+	                body { 
+	                    margin: 0;
+	                    font-family: 'Quicksand', sans-serif !important;
+	                }
+	            `}</style>
 			</div>
         );
 

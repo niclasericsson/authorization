@@ -40,6 +40,10 @@ class Header extends React.Component {
                       <a style={styles.linkStyle}><FiHome /></a>
                     </Link>
                     <div style={styles.rightContainer}>
+                        <Link href="/">
+                          <a style={styles.linkStyle}>Sign in</a>
+                        </Link>
+                        <span style={styles.divider}>|</span>
                         <Link href="/register">
                           <a style={styles.linkStyle}>Register</a>
                         </Link>
@@ -65,9 +69,11 @@ const styles = {
         marginLeft: 10
     },
     linkStyle: {
-        marginRight: 15,
-        color: '#fff',
-        textDecoration: 'none'
+        color: '#fff'
+    },
+    divider: {
+        marginRight: 10,
+        marginLeft: 10
     }
 }
 

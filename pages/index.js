@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
 import { Column, Row } from 'simple-flexbox';
+import Button from 'react-bootstrap/Button';
 
-import Logo from '../components/assets'
+import { Logo, Bat } from '../components/assets'
 import Layout from '../components/Layout.js'
 
 export default class Home extends Component {
@@ -21,7 +22,6 @@ export default class Home extends Component {
     }
 
     componentDidMount() {
-
         fetch('/api/verify')
             .then(res => {
                 if (res.status === 200) {
@@ -36,6 +36,14 @@ export default class Home extends Component {
                     })
                 }
             })
+
+
+
+        fetch('/api/getuser')
+            .then(res => console.log(res))
+            //.then(res => this.setState({message: res}));
+
+
      }
 
     signIn(){
@@ -104,15 +112,11 @@ export default class Home extends Component {
         return (
             <Layout signedIn={signedIn}>
                 <div style={styles.container}>
-                    
-                    
-                    <button onClick={() => this.signOut()}>Sign out</button>
-
+                    <Button variant="outline-dark" onClick={() => this.signOut()}>Sign out</Button>
                     <Row vertical='center' justifyContent='center'>
-                        <h1 style={styles.title}>Woho! You're signed in!</h1>
+                        <h1 style={styles.signedInTitle}>Woho! You're signed in!</h1>
                         <Logo />
                     </Row>
-
                 </div>
             </Layout>
         );
@@ -121,17 +125,15 @@ export default class Home extends Component {
     return (
         <Layout signedIn={signedIn}>
             <div style={styles.container}>
-                <Logo />
-
+                <Bat />
                 <Row vertical='center' justifyContent='center'>
                     <Column vertical='end'>
-                        <h1>Sign in</h1>
+                        <h1 style={styles.title}>Sign in</h1>
                         <input style={styles.input} type="text" placeholder='Username or email' value={email} onChange={this.handleEmailChange} />
                         <input style={styles.input} type="text" placeholder='Password' value={password} onChange={this.handlePasswordChange} />
-                        <button onClick={() => this.signIn()}>Sign in</button>
+                        <Button variant="outline-dark" onClick={() => this.signIn()}>Sign in</Button>
                     </Column>
                 </Row>
-
             </div>
         </Layout>
     );
@@ -142,15 +144,18 @@ const styles = {
     container: {
         padding: 20
     },
+    title: {
+        marginBottom: 20
+    },
+    signedInTitle: {
+        margin: 20
+    },
     input: {
         padding: 10,
         border: '1px solid #ccc',
-        borderRadius: 20,
+        borderRadius: 5,
         width: 350,
         marginBottom: 20,
         fontFamily: 'Quicksand'
-    },
-    title: {
-        margin: 20
     }
 }

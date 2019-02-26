@@ -1,29 +1,19 @@
 import React, { Component } from 'react'
 import Link from 'next/link'
 import Router from 'next/router'
+import { Column, Row } from 'simple-flexbox';
+import Button from 'react-bootstrap/Button';
 
-import Logo from '../components/assets'
+import { Logo, Kids } from '../components/assets'
 import Layout from '../components/Layout.js'
 
 export default class SignIn extends Component {
-
-    /*static async getInitialProps(ctx) {
-        if (ctx && ctx.req) {
-            console.log('server side')
-            ctx.res.writeHead(302, {Location: '/'})
-            ctx.res.end()
-        } else {
-            console.log('client side')
-            Router.push('/')
-        }
-    }*/
 
 	constructor(){
 		super();
 		this.state = {
             signedIn: false,
             isLoading: true,
-			message: 'Loading...',
             email: '',
             password: ''
 		}
@@ -86,7 +76,7 @@ export default class SignIn extends Component {
 
   render() {
 
-  	const { message, email, password, isLoading, signedIn } = this.state;
+  	const { email, password, isLoading, signedIn } = this.state;
 
     if(isLoading){
         return (
@@ -96,36 +86,58 @@ export default class SignIn extends Component {
         );
     }
 
+    if(signedIn){
+        return (
+            <Layout signedIn={signedIn}>
+                <div style={styles.container}>
+                    <Row vertical='center' justifyContent='center'>
+                        <h1 style={styles.signedInTitle}>You're already signed in!</h1>
+                        <Logo />
+                    </Row>
+                </div>
+            </Layout>
+        );
+    }
+
     return (
         <Layout signedIn={signedIn}>
             <div style={styles.container}>
-                <Logo />
-                <span>{message}</span>
+                <Kids />
 
-                <input type="text" value={email} onChange={this.handleEmailChange} />
-                <input type="text" value={password} onChange={this.handlePasswordChange} />
 
-                <button onClick={() => this.register()}>Register</button>
+
+                <Row vertical='center' justifyContent='center'>
+                    <Column vertical='end'>
+                        <h1 style={styles.title}>Register a new user</h1>
+                        <input style={styles.input} type="text" placeholder='Type a username or email' value={email} onChange={this.handleEmailChange} />
+                        <input style={styles.input} type="text" placeholder='Set a password' value={password} onChange={this.handlePasswordChange} />
+                        <Button variant="outline-dark" onClick={() => this.register()}>Register</Button>
+                    </Column>
+                </Row>
+
 
             </div>
-            <style jsx global>{`
-                body { 
-                    margin: 0;
-                    font-family: 'PT Sans';
-                }
-            `}</style>
-      </Layout>
+        </Layout>
     );
   }
 }
 
 const styles = {
     container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
+        padding: 20
     },
-    image: {
-        
+    title: {
+        marginBottom: 20
+    },
+    signedInTitle: {
+        margin: 20
+    },
+    input: {
+        padding: 10,
+        border: '1px solid #ccc',
+        borderRadius: 5,
+        width: 350,
+        marginBottom: 20,
+        fontFamily: 'Quicksand'
     }
 }
