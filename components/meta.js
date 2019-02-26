@@ -4,6 +4,8 @@ export default () => (
         <Head>
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <meta charSet="utf-8" />
+            <title>Toca Boca Login</title>
+            <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
             <link
                 rel="stylesheet"
                 href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"

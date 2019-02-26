@@ -6,8 +6,8 @@ const authMiddleware = function(req, res, next) {
  	if(!token){
     	res.status(401).send('No token');
   	} else {
-    	jwt.verify(token, secret, function(err, decoded) {
-	      	if(err){
+    	jwt.verify(token, secret, function(error, decoded) {
+	      	if(error){
 	        	res.status(401).send('Invalid token');
 	      	} else {
 	        	req.email = decoded.email;

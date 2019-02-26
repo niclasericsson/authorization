@@ -3,7 +3,6 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { Column, Row } from 'simple-flexbox';
 import Button from 'react-bootstrap/Button';
-
 import { Logo, Bat } from '../components/assets'
 import Layout from '../components/Layout.js'
 
@@ -36,14 +35,6 @@ export default class Home extends Component {
                     })
                 }
             })
-
-
-
-        fetch('/api/getuser')
-            .then(res => console.log(res))
-            //.then(res => this.setState({message: res}));
-
-
      }
 
     signIn(){
@@ -67,11 +58,11 @@ export default class Home extends Component {
                     signedIn: true
                 })
             } else {
-                alert('Failed :(')
                 this.setState({
                     isLoading: false,
                     signedIn: false
                 })
+                alert('Failed :(')
             }
         })
     }
@@ -98,7 +89,6 @@ export default class Home extends Component {
   render() {
 
     const { email, password, isLoading, signedIn } = this.state;
-    console.log(signedIn)
 
     if(isLoading){
         return (
@@ -112,10 +102,12 @@ export default class Home extends Component {
         return (
             <Layout signedIn={signedIn}>
                 <div style={styles.container}>
-                    <Button variant="outline-dark" onClick={() => this.signOut()}>Sign out</Button>
                     <Row vertical='center' justifyContent='center'>
-                        <h1 style={styles.signedInTitle}>Woho! You're signed in!</h1>
+                        <h1 style={styles.signedInTitle}>Woho! You're signed in!</h1> 
                         <Logo />
+                    </Row>
+                    <Row vertical='center' justifyContent='center'>
+                        <Button variant="outline-dark" onClick={() => this.signOut()}>Sign out</Button>
                     </Row>
                 </div>
             </Layout>

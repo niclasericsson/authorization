@@ -14,7 +14,7 @@ const cookieParser = require('cookie-parser');
 // Custom middleware
 const authMiddleware = require('./server/middleware');
 
-// Set a secret - this could be improved!
+// Set a secret (should be fixed in production)
 var secret = new Buffer('tocabocasecret', 'base64');
 
 // Initialize Firebase
@@ -50,7 +50,7 @@ app.prepare()
         });
 
         server.get('/api/getuser', authMiddleware, function(req, res) {
-            res.send({ user: req.email });
+            res.send(req.email);
         });
 
         server.post('/api/login', function(req, res) {
@@ -71,7 +71,7 @@ app.prepare()
 
                             // Let's create a token
                             let token = jwt.sign(
-                                {email: email },
+                                { email: email },
                                 secret,
                                 { expiresIn: 3600 }
                             );
