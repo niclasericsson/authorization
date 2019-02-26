@@ -110,7 +110,7 @@ export default class SignIn extends Component {
                     <Column vertical='end'>
                         <h1 style={styles.title}>Register a new user</h1>
                         <input style={styles.input} type="text" placeholder='Type a username or email' value={email} onChange={this.handleEmailChange} />
-                        <input style={styles.input} type="text" placeholder='Set a password' value={password} onChange={this.handlePasswordChange} />
+                        <input style={styles.input} type="password" placeholder='Set a password' value={password} onChange={this.handlePasswordChange} />
                         <Button variant="outline-dark" onClick={() => this.register()}>Register</Button>
                     </Column>
                 </Row>

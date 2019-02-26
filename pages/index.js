@@ -130,7 +130,7 @@ export default class Home extends Component {
                     <Column vertical='end'>
                         <h1 style={styles.title}>Sign in</h1>
                         <input style={styles.input} type="text" placeholder='Username or email' value={email} onChange={this.handleEmailChange} />
-                        <input style={styles.input} type="text" placeholder='Password' value={password} onChange={this.handlePasswordChange} />
+                        <input style={styles.input} type="password" placeholder='Password' value={password} onChange={this.handlePasswordChange} />
                         <Button variant="outline-dark" onClick={() => this.signIn()}>Sign in</Button>
                     </Column>
                 </Row>
