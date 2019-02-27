@@ -1,4 +1,4 @@
-var secret = Buffer.from('tocabocasecret', 'base64');
+const secret = Buffer.from('tocabocasecret', 'base64');
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = function(req, res, next) {
@@ -16,4 +16,5 @@ const authMiddleware = function(req, res, next) {
 	    });
   	}
 }
+
 module.exports = authMiddleware;

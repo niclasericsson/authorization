@@ -38,7 +38,7 @@ export default class Home extends Component {
                     })
                 }
             });
-     }
+    }
 
     signIn(){
         this.setState({ isLoading: true })
@@ -89,53 +89,53 @@ export default class Home extends Component {
         this.setState({password: event.target.value});
     }
 
-  render() {
+    render() {
 
-    const { username, password, isLoading, signedIn, message } = this.state;
+        const { username, password, isLoading, signedIn, message } = this.state;
 
-    if(isLoading){
-        return (
-            <Loading />
-        );
-    }
+        if(isLoading){
+            return (
+                <Loading />
+            );
+        }
 
-    if(signedIn){
+        if(signedIn){
+            return (
+                <Layout signedIn={signedIn}>
+                    <div style={styles.container}>
+                        <Row vertical='center' justifyContent='center'>
+                            <h1 style={styles.signedInTitle}>Woho! You're signed in!</h1> 
+                            <Logo />
+                        </Row>
+                        <Row vertical='center' justifyContent='center'>
+                            <Button variant="outline-dark" onClick={() => this.signOut()}>Sign out</Button>
+                        </Row>
+                    </div>
+                </Layout>
+            );
+        }
+
         return (
             <Layout signedIn={signedIn}>
                 <div style={styles.container}>
+                    <Bat />
                     <Row vertical='center' justifyContent='center'>
-                        <h1 style={styles.signedInTitle}>Woho! You're signed in!</h1> 
-                        <Logo />
-                    </Row>
-                    <Row vertical='center' justifyContent='center'>
-                        <Button variant="outline-dark" onClick={() => this.signOut()}>Sign out</Button>
+                        <Column vertical='end'>
+                            <h1 style={styles.title}>Sign in</h1>
+                            { message ?
+                                <div style={styles.messageBox}>{message}</div>
+                            :
+                                null
+                            }
+                            <input style={styles.input} type="text" placeholder='Username' value={username} onChange={this.handleUserNameChange} />
+                            <input style={styles.input} type="password" placeholder='Password' value={password} onChange={this.handlePasswordChange} />
+                            <Button variant="outline-dark" onClick={() => this.signIn()}>Sign in</Button>
+                        </Column>
                     </Row>
                 </div>
             </Layout>
         );
     }
-
-    return (
-        <Layout signedIn={signedIn}>
-            <div style={styles.container}>
-                <Bat />
-                <Row vertical='center' justifyContent='center'>
-                    <Column vertical='end'>
-                        <h1 style={styles.title}>Sign in</h1>
-                        { message ?
-                            <div style={styles.messageBox}>{message}</div>
-                        :
-                            null
-                        }
-                        <input style={styles.input} type="text" placeholder='Username' value={username} onChange={this.handleUserNameChange} />
-                        <input style={styles.input} type="password" placeholder='Password' value={password} onChange={this.handlePasswordChange} />
-                        <Button variant="outline-dark" onClick={() => this.signIn()}>Sign in</Button>
-                    </Column>
-                </Row>
-            </div>
-        </Layout>
-    );
-  }
 }
 
 const styles = {

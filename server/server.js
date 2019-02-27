@@ -21,14 +21,15 @@ var secret = Buffer.from('tocabocasecret', 'base64');
 var fb = require("firebase-admin");
 var serviceAccount = require("../server/serviceAccount.json");
 fb.initializeApp({
-  credential: fb.credential.cert(serviceAccount),
-  databaseURL: "https:/"+"/tocaboca-project.firebaseio.com",
-  authDomain: "tocaboca-project.firebaseapp.com",
-  projectId: "tocaboca-project"
+    credential: fb.credential.cert(serviceAccount),
+    databaseURL: "https:/"+"/tocaboca-project.firebaseio.com",
+    authDomain: "tocaboca-project.firebaseapp.com",
+    projectId: "tocaboca-project"
 });
 
 app.prepare()
     .then(() => {
+
         const server = express();
 
         // Allow Authorization header
@@ -37,20 +38,13 @@ app.prepare()
             next();
         });
 
-        // Set JSON spaces for intendation
-        server.set('json spaces', 2);
-
-        // Use parsers
+        // Use middleware
         server.use(bodyParser.urlencoded({ extended: false }));
         server.use(bodyParser.json());
         server.use(cookieParser());
 
         server.get('/api/user', authMiddleware, function(req, res) {
             res.status(200).send(JSON.stringify({ error: false, message: req.username }));
-        });
-
-        server.get('/api/getuser', authMiddleware, function(req, res) {
-            res.status(200).send(JSON.stringify({ username: req.username }));
         });
 
         server.post('/api/login', function(req, res) {
@@ -81,14 +75,12 @@ app.prepare()
 
                         } else {
                             console.log('Wrong password')
-                            //res.status(400).send({ error: true, message: 'Wrong password' });
                             res.status(400).send(JSON.stringify({ error: true, message: 'Wrong password' }));
                         }
                     });
 
                 } else {
                     console.log('No user found')
-                    //res.status(400).json({ error: true, message: 'No user found' });
                     res.status(400).send(JSON.stringify({ error: true, message: 'No user found' }));
                 }
 
@@ -110,7 +102,6 @@ app.prepare()
                 // Store user with password in Firebase
                 fb.database().ref('users/' + username).set(hash);
 
-                //res.status(200).json({ error: false, message: 'Stored!' });
                 res.status(200).send(JSON.stringify({ error: false, message: 'User stored' }));
             });
 

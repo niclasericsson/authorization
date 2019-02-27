@@ -18,7 +18,6 @@ class Header extends React.Component {
                 .then(res => res.json())
                 .then(resJson => this.setState({user: resJson.message}));
         }
-        
     }
   
     render() {

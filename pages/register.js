@@ -15,6 +15,7 @@ export default class SignIn extends Component {
             signedIn: false,
             registrationDone: false,
             isLoading: true,
+            message: null,
             username: '',
             password: ''
 		}
@@ -38,24 +39,27 @@ export default class SignIn extends Component {
                     })
                 }
             });
-	 }
+    }
 
-     register(){
-        this.setState({
-            isLoading: true
-        })
+    register(){
         const { username, password } = this.state;
-        fetch('/api/register', {
-            method: 'POST',
-            headers: new Headers({
-                'Content-Type': 'application/json',
-            }),
-            body: JSON.stringify({
-              username: username,
-              password: password
+
+        // Only accept letters and numbers for username
+        const regex  = /[^a-z\d]/i;
+        const accepted = !(regex.test(username));
+        if(accepted){
+            this.setState({ isLoading: true })
+            fetch('/api/register', {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                }),
+                body: JSON.stringify({
+                  username: username,
+                  password: password
+                })
             })
-        })
-        .then(res => res.json())
+            .then(res => res.json())
             .then(resJson => {
                 if(!resJson.error){
                     this.setState({
@@ -66,29 +70,12 @@ export default class SignIn extends Component {
                     this.setState({
                         isLoading: false
                     })
-                    alert(resJson.message)
+                    this.setState({ message: resJson.message })
                 }
             });
-
-
-
-
-
-
-
-
-
-        /*.then(res => {
-            if (res.status === 200) {
-                this.setState({
-                    isLoading: false
-                })
-            } else {
-                this.setState({
-                    isLoading: false
-                })
-            }
-        })*/
+        } else {
+            this.setState({ message: 'Only letters and numbers' })
+        }
     }
 
     handleUserNameChange(event) {
@@ -99,53 +86,63 @@ export default class SignIn extends Component {
         this.setState({password: event.target.value});
     }
 
-  render() {
+    render() {
 
-  	const { username, password, isLoading, signedIn, registrationDone } = this.state;
+      	const { username, password, isLoading, signedIn, message, registrationDone } = this.state;
 
-    if(isLoading){
-        return (
-            <Loading />
-        );
-    }
+        if(isLoading){
+            return (
+                <Loading />
+            );
+        }
 
-    if(signedIn){
+        if(signedIn){
+            return (
+                <Layout signedIn={signedIn}>
+                    <div style={styles.container}>
+                        <Row vertical='center' justifyContent='center'>
+                            <h1 style={styles.signedInTitle}>You're already signed in!</h1>
+                            <Logo />
+                        </Row>
+                    </div>
+                </Layout>
+            );
+        }
+
         return (
             <Layout signedIn={signedIn}>
                 <div style={styles.container}>
+                    <Kids />
                     <Row vertical='center' justifyContent='center'>
-                        <h1 style={styles.signedInTitle}>You're already signed in!</h1>
-                        <Logo />
+                        {registrationDone ?
+                            <Column vertical='end'>
+                                <h1 style={styles.title}>Register</h1>
+                                <div style={styles.registrationDoneBox}>User registration complete!</div>
+                            </Column>
+                        :
+                            <Column vertical='end'>
+                                <h1 style={styles.title}>Register</h1>
+                                { message ?
+                                    <div style={styles.messageBox}>{message}</div>
+                                :
+                                    null
+                                }
+                                <input style={styles.input} type="text" placeholder='Type a username' value={username} onChange={this.handleUserNameChange} />
+                                <input style={styles.input} type="password" placeholder='Set a password' value={password} onChange={this.handlePasswordChange} />
+                                { username.length == 0 || password.length == 0 ?
+                                    <Button disabled variant="outline-dark" onClick={() => this.register()}>Register</Button>
+                                    :
+                                    <Button variant="outline-dark" onClick={() => this.register()}>Register</Button>
+                                }
+                                
+                            </Column>
+                        }
+
                     </Row>
                 </div>
             </Layout>
         );
     }
-
-    return (
-        <Layout signedIn={signedIn}>
-            <div style={styles.container}>
-                <Kids />
-                <Row vertical='center' justifyContent='center'>
-                    {registrationDone ?
-                        <Column vertical='end'>
-                            <h1 style={styles.title}>Register</h1>
-                            <div style={styles.registrationDoneBox}>User registration complete!</div>
-                        </Column>
-                    :
-                        <Column vertical='end'>
-                            <h1 style={styles.title}>Register</h1>
-                            <input style={styles.input} type="text" placeholder='Type a username' value={username} onChange={this.handleUserNameChange} />
-                            <input style={styles.input} type="password" placeholder='Set a password' value={password} onChange={this.handlePasswordChange} />
-                            <Button variant="outline-dark" onClick={() => this.register()}>Register</Button>
-                        </Column>
-                    }
-
-                </Row>
-            </div>
-        </Layout>
-    );
-  }
 }
 
 const styles = {
@@ -171,6 +168,15 @@ const styles = {
         width: 350,
         borderRadius: 5,
         border: '1px solid',
+        textAlign: 'center'
+    },
+    messageBox: {
+        padding: 10,
+        width: 350,
+        borderRadius: 5,
+        marginBottom: 20,
+        backgroundColor: '#009999',
+        color: '#fff',
         textAlign: 'center'
     }
 }
