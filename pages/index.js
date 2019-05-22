@@ -3,7 +3,6 @@ import Link from 'next/link'
 import Router from 'next/router'
 import { Column, Row } from 'simple-flexbox';
 import Button from 'react-bootstrap/Button';
-import { Logo, Bat } from '../components/assets'
 import Layout from '../components/Layout.js'
 import Loading from '../components/Loading.js'
 
@@ -105,7 +104,6 @@ export default class Home extends Component {
                     <div style={styles.container}>
                         <Row vertical='center' justifyContent='center'>
                             <h1 style={styles.signedInTitle}>Woho! You're signed in!</h1> 
-                            <Logo />
                         </Row>
                         <Row vertical='center' justifyContent='center'>
                             <Button variant="outline-dark" onClick={() => this.signOut()}>Sign out</Button>
@@ -118,7 +116,6 @@ export default class Home extends Component {
         return (
             <Layout signedIn={signedIn}>
                 <div style={styles.container}>
-                    <Bat />
                     <Row vertical='center' justifyContent='center'>
                         <Column vertical='end'>
                             <h1 style={styles.title}>Sign in</h1>
@@ -140,13 +137,15 @@ export default class Home extends Component {
 
 const styles = {
     container: {
-        padding: 20
+        padding: 20,
+        marginTop: 50
     },
     title: {
         marginBottom: 20
     },
     signedInTitle: {
-        margin: 20
+        margin: 20,
+        textAlign: 'center'
     },
     input: {
         padding: 10,

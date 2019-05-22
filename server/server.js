@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 const authMiddleware = require('../server/middleware/auth');
 
 // Set a secret (should be fixed in production)
-var secret = Buffer.from('tocabocasecret', 'base64');
+var secret = Buffer.from('supersecretkey', 'base64');
 
 // Initialize Firebase
 var fb = require("firebase-admin");
