@@ -2,7 +2,7 @@
 A simple login application
 
 ```
-git clone https://github.com/NiclasEricsson/authorization.git
+git clone https://github.com/niclasericsson/authorization.git
 ```
 
 Then install with npm:
