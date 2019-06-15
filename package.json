@@ -2,13 +2,23 @@
     "name": "authorization",
     "version": "1.0.0",
     "description": "A simple login application",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/niclasericsson/authorization.git"
+    },
     "main": "index.js",
     "scripts": {
         "dev": "node server/server.js",
         "build": "next build",
         "start": "next start"
     },
-    "keywords": [],
+    "keywords": [
+        "authorization",
+        "react",
+        "next.js",
+        "express.js",
+        "jwt"
+    ],
     "author": "Niclas Ericsson",
     "license": "ISC",
     "dependencies": {
