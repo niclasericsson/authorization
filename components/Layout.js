@@ -3,36 +3,33 @@ import Meta from '../components/meta'
 import MainFont from '../components/MainFont'
 
 class Layout extends React.Component {
-
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
-            signedIn: props.signedIn
+            signedIn: props.signedIn,
         }
-    };
-
-    componentDidMount(){
-    	MainFont();
     }
-  
+
+    componentDidMount() {
+        MainFont()
+    }
+
     render() {
+        const { signedIn } = this.state
 
-        const { signedIn } = this.state;
-
-        return(
+        return (
             <div>
-            	<Meta />
-				<Header signedIn={signedIn} disabled={false} />
-				{this.props.children}
-				<style jsx global>{`
-	                body { 
-	                    margin: 0;
-	                    font-family: 'Quicksand', sans-serif !important;
-	                }
-	            `}</style>
-			</div>
-        );
-
+                <Meta />
+                <Header signedIn={signedIn} disabled={false} />
+                {this.props.children}
+                <style jsx global>{`
+                    body {
+                        margin: 0;
+                        font-family: 'Quicksand', sans-serif !important;
+                    }
+                `}</style>
+            </div>
+        )
     }
 }
 

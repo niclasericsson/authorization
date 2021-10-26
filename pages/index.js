@@ -1,47 +1,44 @@
 import React, { Component } from 'react'
-import Link from 'next/link'
-import Router from 'next/router'
-import { Column, Row } from 'simple-flexbox';
-import Button from 'react-bootstrap/Button';
+import { Column, Row } from 'simple-flexbox'
+import Button from 'react-bootstrap/Button'
 import Layout from '../components/Layout.js'
 import Loading from '../components/Loading.js'
 
 export default class Home extends Component {
-
-    constructor(props){
-        super(props);
+    constructor(props) {
+        super(props)
         this.state = {
             signedIn: false,
             isLoading: true,
             message: null,
             username: '',
-            password: ''
+            password: '',
         }
-        this.handleUserNameChange = this.handleUserNameChange.bind(this);
-        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+        this.handleUserNameChange = this.handleUserNameChange.bind(this)
+        this.handlePasswordChange = this.handlePasswordChange.bind(this)
     }
 
     componentDidMount() {
         fetch('/api/user')
-            .then(res => res.json())
-            .then(resJson => {
-                if(!resJson.error){
+            .then((res) => res.json())
+            .then((resJson) => {
+                if (!resJson.error) {
                     this.setState({
                         isLoading: false,
-                        signedIn: true
+                        signedIn: true,
                     })
                 } else {
                     this.setState({
                         isLoading: false,
-                        signedIn: false
+                        signedIn: false,
                     })
                 }
-            });
+            })
     }
 
-    signIn(){
+    signIn() {
         this.setState({ isLoading: true })
-        const { username, password } = this.state;
+        const { username, password } = this.state
         fetch('/api/login', {
             method: 'POST',
             headers: new Headers({
@@ -49,103 +46,121 @@ export default class Home extends Component {
             }),
             body: JSON.stringify({
                 username: username,
-                password: password
-            })
+                password: password,
+            }),
         })
-        .then(res => res.json())
-            .then(resJson => {
-                if(!resJson.error){
+            .then((res) => res.json())
+            .then((resJson) => {
+                if (!resJson.error) {
                     this.setState({
                         isLoading: false,
-                        signedIn: true
+                        signedIn: true,
                     })
                 } else {
                     this.setState({
                         isLoading: false,
                         signedIn: false,
-                        message: resJson.message
+                        message: resJson.message,
                     })
                 }
-            });
-    }
-
-    signOut(){
-        this.setState({ isLoading: true })
-        fetch('/api/logout')
-            .then(res => {
-                this.setState({
-                    isLoading: false,
-                    signedIn: false
-                })
             })
     }
 
+    signOut() {
+        this.setState({ isLoading: true })
+        fetch('/api/logout').then((res) => {
+            this.setState({
+                isLoading: false,
+                signedIn: false,
+            })
+        })
+    }
+
     handleUserNameChange(event) {
-        this.setState({username: event.target.value});
+        this.setState({ username: event.target.value })
     }
 
     handlePasswordChange(event) {
-        this.setState({password: event.target.value});
+        this.setState({ password: event.target.value })
     }
 
     render() {
+        const { username, password, isLoading, signedIn, message } = this.state
 
-        const { username, password, isLoading, signedIn, message } = this.state;
-
-        if(isLoading){
-            return (
-                <Loading />
-            );
+        if (isLoading) {
+            return <Loading />
         }
 
-        if(signedIn){
+        if (signedIn) {
             return (
                 <Layout signedIn={signedIn}>
                     <div style={styles.container}>
-                        <Row vertical='center' justifyContent='center'>
-                            <h1 style={styles.signedInTitle}>Woho! You're signed in!</h1> 
+                        <Row vertical="center" justifyContent="center">
+                            <h1 style={styles.signedInTitle}>
+                                Woho! You're signed in!
+                            </h1>
                         </Row>
-                        <Row vertical='center' justifyContent='center'>
-                            <Button variant="outline-dark" onClick={() => this.signOut()}>Sign out</Button>
+                        <Row vertical="center" justifyContent="center">
+                            <Button
+                                variant="outline-dark"
+                                onClick={() => this.signOut()}
+                            >
+                                Sign out
+                            </Button>
                         </Row>
                     </div>
                 </Layout>
-            );
+            )
         }
 
         return (
             <Layout signedIn={signedIn}>
                 <div style={styles.container}>
-                    <Row vertical='center' justifyContent='center'>
-                        <Column vertical='end'>
+                    <Row vertical="center" justifyContent="center">
+                        <Column vertical="end">
                             <h1 style={styles.title}>Sign in</h1>
-                            { message ?
+                            {message ? (
                                 <div style={styles.messageBox}>{message}</div>
-                            :
-                                null
-                            }
-                            <input style={styles.input} type="text" placeholder='Username' value={username} onChange={this.handleUserNameChange} />
-                            <input style={styles.input} type="password" placeholder='Password' value={password} onChange={this.handlePasswordChange} />
-                            <Button variant="outline-dark" onClick={() => this.signIn()}>Sign in</Button>
+                            ) : null}
+                            <input
+                                style={styles.input}
+                                type="text"
+                                placeholder="Username"
+                                value={username}
+                                onChange={this.handleUserNameChange}
+                            />
+                            <input
+                                style={styles.input}
+                                type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={this.handlePasswordChange}
+                            />
+                            <Button
+                                variant="outline-dark"
+                                onClick={() => this.signIn()}
+                            >
+                                Sign in
+                            </Button>
                         </Column>
                     </Row>
                 </div>
             </Layout>
-        );
+        )
     }
 }
 
 const styles = {
     container: {
         padding: 20,
-        marginTop: 50
+        marginTop: 50,
     },
     title: {
-        marginBottom: 20
+        marginBottom: 20,
     },
     signedInTitle: {
         margin: 20,
-        textAlign: 'center'
+        textAlign: 'center',
     },
     input: {
         padding: 10,
@@ -153,7 +168,7 @@ const styles = {
         borderRadius: 5,
         width: 350,
         marginBottom: 20,
-        fontFamily: 'Quicksand'
+        fontFamily: 'Quicksand',
     },
     messageBox: {
         padding: 10,
@@ -162,6 +177,6 @@ const styles = {
         marginBottom: 20,
         backgroundColor: '#009999',
         color: '#fff',
-        textAlign: 'center'
-    }
+        textAlign: 'center',
+    },
 }

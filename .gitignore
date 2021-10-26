@@ -24,3 +24,5 @@ yarn-error.log*
 
 .next
 authorization.sublime-workspace
+
+service-account.json
